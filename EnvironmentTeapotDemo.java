@@ -39,10 +39,10 @@ import static org.lwjgl.system.MemoryUtil.*;
 public class EnvironmentTeapotDemo {
 
     long window;
-    int width = 1024;
-    int height = 768;
-    int fbWidth = 1024;
-    int fbHeight = 768;
+    int width = 1920;
+    int height = 1080;
+    int fbWidth = 1920;
+    int fbHeight = 1080;
     float fov = 60, rotX, rotY;
 
     int environmentProgram;

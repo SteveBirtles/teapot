@@ -2,7 +2,6 @@
  * Copyright LWJGL. All rights reserved.
  * License terms: http://lwjgl.org/license.php
  */
- 
 
 import org.lwjgl.BufferUtils;
 import org.lwjgl.PointerBuffer;
@@ -73,12 +72,15 @@ public class SpaceGame {
             linearVel.mul(1.0f - linearDamping * dt);
             return this;
         }
+
         public Vector3f right(Vector3f dest) {
             return rotation.positiveX(dest);
         }
+
         public Vector3f up(Vector3f dest) {
             return rotation.positiveY(dest);
         }
+
         public Vector3f forward(Vector3f dest) {
             return rotation.positiveZ(dest).negate();
         }
@@ -191,7 +193,7 @@ public class SpaceGame {
 
     private ByteBuffer charBuffer = BufferUtils.createByteBuffer(16 * 270);
 
-    private boolean windowed = true;
+    private boolean windowed = false;
     private boolean[] keyDown = new boolean[GLFW.GLFW_KEY_LAST];
     private boolean leftMouseDown = false;
     private boolean rightMouseDown = false;
@@ -247,21 +249,21 @@ public class SpaceGame {
         glfwSetCursor(window, glfwCreateStandardCursor(GLFW_CROSSHAIR_CURSOR));
 
         glfwSetFramebufferSizeCallback(window, fbCallback = new GLFWFramebufferSizeCallback() {
-            public void invoke(long window, int width, int height) {
-                if (width > 0 && height > 0 && (SpaceGame.this.fbWidth != width || SpaceGame.this.fbHeight != height)) {
-                    SpaceGame.this.fbWidth = width;
-                    SpaceGame.this.fbHeight = height;
+                public void invoke(long window, int width, int height) {
+                    if (width > 0 && height > 0 && (SpaceGame.this.fbWidth != width || SpaceGame.this.fbHeight != height)) {
+                        SpaceGame.this.fbWidth = width;
+                        SpaceGame.this.fbHeight = height;
+                    }
                 }
-            }
-        });
+            });
         glfwSetWindowSizeCallback(window, wsCallback = new GLFWWindowSizeCallback() {
-            public void invoke(long window, int width, int height) {
-                if (width > 0 && height > 0 && (SpaceGame.this.width != width || SpaceGame.this.height != height)) {
-                    SpaceGame.this.width = width;
-                    SpaceGame.this.height = height;
+                public void invoke(long window, int width, int height) {
+                    if (width > 0 && height > 0 && (SpaceGame.this.width != width || SpaceGame.this.height != height)) {
+                        SpaceGame.this.width = width;
+                        SpaceGame.this.height = height;
+                    }
                 }
-            }
-        });
+            });
 
         System.out.println("Press W/S to move forward/backward");
         System.out.println("Press L.Ctrl/Spacebar to move down/up");
@@ -270,42 +272,42 @@ public class SpaceGame {
         System.out.println("Hold the left mouse button to shoot");
         System.out.println("Hold the right mouse button to rotate towards the mouse cursor");
         glfwSetKeyCallback(window, keyCallback = new GLFWKeyCallback() {
-            public void invoke(long window, int key, int scancode, int action, int mods) {
-                if (key == GLFW_KEY_UNKNOWN) 
-                    return;
-                if (key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE) {
-                    glfwSetWindowShouldClose(window, true);
+                public void invoke(long window, int key, int scancode, int action, int mods) {
+                    if (key == GLFW_KEY_UNKNOWN) 
+                        return;
+                    if (key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE) {
+                        glfwSetWindowShouldClose(window, true);
+                    }
+                    if (action == GLFW_PRESS || action == GLFW_REPEAT) {
+                        keyDown[key] = true;
+                    } else {
+                        keyDown[key] = false;
+                    }
                 }
-                if (action == GLFW_PRESS || action == GLFW_REPEAT) {
-                    keyDown[key] = true;
-                } else {
-                    keyDown[key] = false;
-                }
-            }
-        });
+            });
         glfwSetCursorPosCallback(window, cpCallback = new GLFWCursorPosCallback() {
-            public void invoke(long window, double xpos, double ypos) {
-                float normX = (float) ((xpos - width/2.0) / width * 2.0);
-                float normY = (float) ((ypos - height/2.0) / height * 2.0);
-                SpaceGame.this.mouseX = Math.max(-width/2.0f, Math.min(width/2.0f, normX));
-                SpaceGame.this.mouseY = Math.max(-height/2.0f, Math.min(height/2.0f, normY));
-            }
-        });
-        glfwSetMouseButtonCallback(window, mbCallback = new GLFWMouseButtonCallback() {
-            public void invoke(long window, int button, int action, int mods) {
-                if (button == GLFW_MOUSE_BUTTON_LEFT) {
-                    if (action == GLFW_PRESS)
-                        leftMouseDown = true;
-                    else if (action == GLFW_RELEASE)
-                        leftMouseDown = false;
-                } else if (button == GLFW_MOUSE_BUTTON_RIGHT) {
-                    if (action == GLFW_PRESS)
-                        rightMouseDown = true;
-                    else if (action == GLFW_RELEASE)
-                        rightMouseDown = false;
+                public void invoke(long window, double xpos, double ypos) {
+                    float normX = (float) ((xpos - width/2.0) / width * 2.0);
+                    float normY = (float) ((ypos - height/2.0) / height * 2.0);
+                    SpaceGame.this.mouseX = Math.max(-width/2.0f, Math.min(width/2.0f, normX));
+                    SpaceGame.this.mouseY = Math.max(-height/2.0f, Math.min(height/2.0f, normY));
                 }
-            }
-        });
+            });
+        glfwSetMouseButtonCallback(window, mbCallback = new GLFWMouseButtonCallback() {
+                public void invoke(long window, int button, int action, int mods) {
+                    if (button == GLFW_MOUSE_BUTTON_LEFT) {
+                        if (action == GLFW_PRESS)
+                            leftMouseDown = true;
+                        else if (action == GLFW_RELEASE)
+                            leftMouseDown = false;
+                    } else if (button == GLFW_MOUSE_BUTTON_RIGHT) {
+                        if (action == GLFW_PRESS)
+                            rightMouseDown = true;
+                        else if (action == GLFW_RELEASE)
+                            rightMouseDown = false;
+                    }
+                }
+            });
         glfwMakeContextCurrent(window);
         glfwSwapInterval(0);
         glfwShowWindow(window);
@@ -845,8 +847,8 @@ public class SpaceGame {
             return;
         Vector3f targetOrigin = tmp2;
         targetOrigin.set((float) (enemyShip.x - cam.position.x),
-                         (float) (enemyShip.y - cam.position.y),
-                         (float) (enemyShip.z - cam.position.z));
+            (float) (enemyShip.y - cam.position.y),
+            (float) (enemyShip.z - cam.position.z));
         tmp3.set(tmp2);
         viewMatrix.transformPosition(targetOrigin);
         boolean backward = targetOrigin.z > 0.0f;
@@ -951,7 +953,7 @@ public class SpaceGame {
                 if (ship == null)
                     continue;
                 if (broadphase(ship.x, ship.y, ship.z, this.ship.boundingSphereRadius, shipRadius, projectilePosition, newPosition)
-                        && narrowphase(this.ship.positions, ship.x, ship.y, ship.z, shipRadius, projectilePosition, newPosition, tmp, tmp2)) {
+                && narrowphase(this.ship.positions, ship.x, ship.y, ship.z, shipRadius, projectilePosition, newPosition, tmp, tmp2)) {
                     emitExplosion(tmp, null);
                     ships[r] = null;
                     projectileVelocity.w = 0.0f;
@@ -972,7 +974,7 @@ public class SpaceGame {
                 if (asteroid == null)
                     continue;
                 if (broadphase(asteroid.x, asteroid.y, asteroid.z, this.asteroid.boundingSphereRadius, asteroid.scale, projectilePosition, newPosition)
-                        && narrowphase(this.asteroid.positions, asteroid.x, asteroid.y, asteroid.z, asteroid.scale, projectilePosition, newPosition, tmp, tmp2)) {
+                && narrowphase(this.asteroid.positions, asteroid.x, asteroid.y, asteroid.z, asteroid.scale, projectilePosition, newPosition, tmp, tmp2)) {
                     emitExplosion(tmp, tmp2);
                     projectileVelocity.w = 0.0f;
                     continue projectiles;
