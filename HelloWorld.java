@@ -123,8 +123,8 @@ public class HelloWorld {
                 float g = rand.nextFloat();
                 float b = rand.nextFloat();
                 float a = rand.nextFloat();
-                float w = rand.nextFloat() * width;
-                float h = rand.nextFloat() * height;
+                float w = rand.nextFloat() * 10;
+                float h = rand.nextFloat() * 10;
 
                 glPushMatrix();  
                 glTranslatef(x - w/2, y - h/2, 0f);  
