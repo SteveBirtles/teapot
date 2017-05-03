@@ -101,12 +101,18 @@ public class HelloWorld {
         // bindings available for use.
         GL.createCapabilities();
 
-        // Set the clear color
-        glClearColor(0.0f, 0.0f, 0.5f, 0.0f);
-
         // Run the rendering loop until the user has attempted to close
         // the window or has pressed the ESCAPE key.
         while ( !glfwWindowShouldClose(window) ) {
+
+            long millis = System.currentTimeMillis() / 10;
+            float r = (float) ((Math.sin(millis / 100.0) + 1) / 2.0);
+            float g = (float) ((Math.sin(millis / 100.0 + 2) + 1) / 2.0);
+            float b = (float) ((Math.sin(millis / 100.0 + 4) + 1) / 2.0);
+
+            // Set the clear color
+            glClearColor(r, g, b, 0f);
+
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear the framebuffer
 
             glViewport(0,0,width,height);
@@ -115,28 +121,33 @@ public class HelloWorld {
             glOrtho(0,width,0,height,-1,1);
             glMatrixMode(GL_MODELVIEW);
 
-            for (int i = 0; i < 100; i++) {
+            for (float x = 0; x < width; x += 64) {
+                for (float y = 0; y < width; y += 64) {
 
-                float x = rand.nextFloat() * width;
-                float y = rand.nextFloat() * height;
-                float r = rand.nextFloat();
-                float g = rand.nextFloat();
-                float b = rand.nextFloat();
-                float a = rand.nextFloat();
-                float w = rand.nextFloat() * 10;
-                float h = rand.nextFloat() * 10;
+                    int z = (int) (x * width + y);
 
-                glPushMatrix();  
-                glTranslatef(x - w/2, y - h/2, 0f);  
-                glBegin(GL_QUADS);   
-                glColor4f(r, g, b, a); 
-                glVertex2f(0f, 0f);       
-                glVertex2f(0f, h);
-                glVertex2f(w, h);
-                glVertex2f(w, 0f);       
-                glEnd();
-                glPopMatrix();
+                    r = (float) ((Math.sin((millis + z) / 100.0) + 1) / 2.0); 
+                    g = (float) ((Math.sin(z / 100.0) + 1) / 2.0);
+                    b = (float) ((Math.sin(millis / 100.0) + 1) / 2.0);
 
+                    float i = (float) (Math.sin((millis + z) / 50.0) * 20);
+                    float j = (float) (Math.cos((millis + z) / 50.0) * 20);
+
+                    float w = (float) (30 + 30 * (Math.cos((millis + z) / 100.0) + 1) / 2.0);
+                    float h = (float) (30 + 30 * (Math.sin((millis + z) / 100.0) + 1) / 2.0);
+
+                    glPushMatrix();  
+                    glTranslatef(x - w/2, y - h/2, 0f);  
+                    glBegin(GL_QUADS);   
+                    glColor3f(r, g, b); 
+                    glVertex2f(0f + i, 0f + j);       
+                    glVertex2f(0f + i, h + j);
+                    glVertex2f(w + i, h + j);
+                    glVertex2f(w + i, 0f + j);       
+                    glEnd();
+                    glPopMatrix();
+
+                }
             }
 
             glfwSwapBuffers(window); // swap the color buffers
